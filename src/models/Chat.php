@@ -1,11 +1,15 @@
 <?php
 
+/**
+ * Class Chat
+ * 
+ */
 class Chat
 {
     private $id;
     private $fromId;
     private $toId;
-    private $text;
+	private $text;
     private $createdAt;
 
 	public function  getId() {
@@ -55,7 +59,7 @@ class Chat
             'id'   => $this->getId(),
             'from_id' => $this->getFromId(),
             'to_id' => $this->getToId(),
-            'text' => $this->getText(),
+			'text' => $this->getText(),
             'created_at' => $this->getCreatedAt()
         ];  
     }

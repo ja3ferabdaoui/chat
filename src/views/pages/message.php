@@ -1,9 +1,5 @@
 <?php
-
-// Créer des fichiers et une arborescence
-require_once (VIEWS .'/includes/header.php');
-
-
+    require_once (VIEWS .'/includes/header.php');
 ?>
 
 <div id="frame">
@@ -39,9 +35,8 @@ $(document).ready(function(){
 		event.stopPropagation();
 		event.preventDefault();
 		$(this).addClass('active').siblings().removeClass('active')
-		$('#chat').attr('src','chat/'+$(this).data('user_id'));
+		$('#chat').attr('src','chat/id/'+$(this).data('user_id'));
 	})
-	
 
 	function getUsers(){
 		$.ajax({
@@ -73,8 +68,5 @@ $(document).ready(function(){
 </script>
 
 <?php
-
-require_once (VIEWS .'/includes/footer.php');
-
-
+   require_once (VIEWS .'/includes/footer.php');
 ?>

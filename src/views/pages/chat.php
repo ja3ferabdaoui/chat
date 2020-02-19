@@ -1,39 +1,23 @@
-	
 
-	<div class="contact-profile">
-			
-		<p>Harvey Specter</p>
-		
-        </div>
-		<div class="messages">
-			<ul>
-				<li class="sent">
-					<p>How the hell am I supposed to get a jury to believe you when I am not even sure that I do?!</p>
-				</li>
-				<li class="replies">
-					<p>When you're backed against the wall, break the god damn thing down.</p>
-				</li>
-			 
-		</div>
-			<div class="message-input">
-		<div class="wrap">
-			<input type="text" placeholder="Write your message..." />
-			<i class="fa fa-paperclip attachment" aria-hidden="true"></i>
-			<button class="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
-		</div>
-		</div>	
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<div class="messages">
+  <ul class="ml-0 pl-0">
+  </ul>
+</div>
+<div class="message-input">
+  <div class="wrap">
+    <input type="text" placeholder="Write your message..." />
+    <button class="submit"><i class="fa fa-send" aria-hidden="true"></i></button>
+  </div>
+</div>	
+
+
+
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" >  
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-<!------ Include the above in your HEAD tag ---------->
-
-<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-<!------ Include the above in your HEAD tag ---------->
-
 <script type="text/javascript">
 			
+      
 
 $(document).ready(function(){
   
@@ -43,34 +27,46 @@ function newMessage() {
 	if($.trim(message) == '') {
 		return false;
 	}
-	$('<li class="sent"><p>' + message + '</p></li>').appendTo($('.messages ul'));
-	$('.message-input input').val(null);
-	$(".messages").animate({ scrollTop: $(document).height() }, "fast");
 
-};
-  function getMessages(){
-
-    $.ajax({
-      url: 'messages',
-      type: 'post',
+  $.ajax({
+      url: '/new',
+      type:'post',
+      data : { toId : <?php echo $id; ?>, text : message },
       success : function(data){
-        var ul = $('#messages ul');
-        ul.html('');
-      
         if(!data) return;
-        $.each(JSON.parse(data), function(index, item) {
-          ul.append(
-          '<li class="sent" >\
-              <p >\
-                '+ item.text +' \
-              </p>\
-          </li>')
+        $('.messages ul').html('')
+        $.each(JSON.parse(data), function(index, item) { 
+          $('<li class="'+ ( item.from_id == <?php echo $_SESSION['user_id']; ?> ? 'replie':'sent' ) +' " ><p>'+ item.text +'</p></li>').appendTo($('.messages ul'));
         });
       }
+   })
+	$('<li class="replie"><p>' + message + '</p></li>').appendTo($('.messages ul'));
+	$('.message-input input').val(null);
+	$(".messages").animate({ scrollTop: $(".messages ul").prop('scrollHeight') }, 250);
+
+};
+ 
+ 
+  function getMessages(){
+    $.ajax({
+      url: '/messages/toId/' + <?php echo $id; ?> ,
+      success : function(data){
+        if(!data) return;
+        $('.messages ul').html('')
+        $.each(JSON.parse(data), function(index, item) { 
+         
+          $('<li class="'+ ( item.from_id == <?php echo $_SESSION['user_id']; ?> ? 'replie':'sent' ) +' " ><p>'+ item.text +'</p></li>').appendTo($('.messages ul'));
+        });
+        $(".messages").animate({ scrollTop: $(".messages").prop('scrollHeight') }, "fast");
+      }
     })
+
     setTimeout(function() {
-      getUsers();
-    }, 1000);
+  
+      getMessages();
+    }, 3000);
+
+
   };
   getMessages();
 $('.submit').click(function() {
@@ -99,15 +95,17 @@ $(window).on('keydown', function(e) {
 }
 
 .contact-profile p {
-  float: left;
+  
 }
 
 .messages {
   height: auto;
-  min-height: calc(100% - 93px);
-  max-height: calc(100% - 93px);
+  min-height: calc(100% - 80px);
+  max-height: calc(100% - 80px);
   overflow-y: scroll;
   overflow-x: hidden;
+  margin-top:60px;
+  margin-bottom:60px;
 }
 @media screen and (max-width: 735px) {
  .messages {
@@ -132,26 +130,16 @@ $(window).on('keydown', function(e) {
  .messages ul li:nth-last-child(1) {
   margin-bottom: 20px;
 }
- .messages ul li.sent img {
-  margin: 6px 8px 0 0;
-}
- .messages ul li.sent p {
+ .messages ul li.replie p {  
   background: #435f7a;
   color: #f5f5f5;
 }
- .messages ul li.replies img {
-  float: right;
-  margin: 6px 0 0 8px;
-}
-.messages ul li.replies p {
+
+.messages ul li.sent p {
   background: #f5f5f5;
   float: right;
 }
- .messages ul li img {
-  width: 22px;
-  border-radius: 50%;
-  float: left;
-}
+
  .messages ul li p {
   display: inline-block;
   padding: 10px 15px;

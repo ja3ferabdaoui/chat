@@ -8,26 +8,39 @@ session_start();
 class ChatController 
 {   
     private $model;
+    private $view;
 
     public function __construct()
     {
         $this->model = new ChatManager();
+        $this->view = New View('chat');
     }
 
     public function newMessage($params)
-    {
-        $this->model->save($params);
+    {   
+        if (isset($_SESSION['user_id']) && ($_SESSION['user_id'] != $params['toId'])) {
+
+            $params['fromId'] = $_SESSION['user_id'];
+            $this->model->save($params);
+        }else{
+            $this->view->redirect('login');
+        }
     }
 
-    public function getAll($id)
-    {     
-         $this->model->findAll($id);
+    public function getAll($params)
+    {    
+        if (isset($_SESSION['user_id'])) {
+
+            $params['fromId'] = $_SESSION['user_id'];
+            $this->model->findAll($params);
+        }else{
+            $this->view->redirect('login');
+        }
     }
 
     public function chat($id)
     {   
-        $view = New View('chat');
-        $view->render(['id'=>$id]);
+        $this->view->render($id);
     }
 
 }

@@ -37,8 +37,11 @@ class UserController
 
         $username = trim($params['username']);
         $email    = trim($params['email']);
+        
+        if (isset($_SESSION['user_id'])) {
 
-        if($email){
+            $this->view->redirect('message');
+        }else if($email){
            
             $currentUser = $this->model->findByEmail($email);
             if($currentUser['id']){
@@ -71,8 +74,13 @@ class UserController
     }
     
     public function getAll()
-    {  
-         $this->model->findAll($_SESSION['user_id']);
+    {    
+        if (isset($_SESSION['user_id'])) {
+
+            $this->model->findAll($_SESSION['user_id']);
+        }else{
+            $this->view->redirect('login');
+        }
     }
     
     public function logout()

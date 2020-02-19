@@ -13,7 +13,7 @@ class View
     {   
         extract($params);
         $view = $this->view;
-     
+        ob_start();
         include_once(VIEWS.'pages/'.$view.'.php');
     }
 
